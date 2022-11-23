@@ -13,14 +13,13 @@ import {styles} from '../../styles';
 import {Warna_Putih} from '../../utils';
 
 const Register = ({navigation}) => {
-  const [mata, setmata] = useState(true);
+  const [mata1, setmata1] = useState(true);
+  const [mata2, setmata2] = useState(true);
   const [name, setNama] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [ktp, setKtp] = useState('');
-  const [noHp, setNoHp] = useState('');
-  const [gender, setGender] = useState('');
-  const [loading, setLoading] = useState('');
+  const [password_Confirmation, setPassword_Confirmation] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const reg = () => {
     if (name === '') {
@@ -36,38 +35,26 @@ const Register = ({navigation}) => {
       Alert.alert('Ups !', 'Anda belum mengisi Password');
     } else if (password.length < 8) {
       Alert.alert('Ups !', 'Password minimal 8 karakter');
-    } else if (ktp === '') {
-      Alert.alert('Ups !', 'anda belum mengisi KTP');
-    } else if (ktp === '') {
-      Alert.alert('Ups !', 'anda belum mengisi KTP');
-    } else if (noHp === '') {
-      Alert.alert('Ups !', 'anda belum mengisi No Telp');
-    } else if (gender === '') {
-      Alert.alert('Ups !', 'anda belum mengisi Gender');
     } else {
       setLoading(true);
       let myHeaders = new Headers();
-      myHeaders.append(
-        'Cookie',
-        'XSRF-TOKEN=eyJpdiI6InRNS0dzZFNSSFpxUjkxVmFKdC9pMlE9PSIsInZhbHVlIjoiYzhCNmxqY09tN0VNVysxL3crbmVFQmN5RHNSREExUXlCRVNCVkZqSG1yaHVXZ2R3Z1ZrS0NHTkdacjlBT0UvbzhMeHNkejZhTTJ6RHF2NkFmVUs5NlFvUTRBY1h5WE83ZGJEOS96Z3pTb0VyNVNRclZHWXFQN3U4T1RYVEJFS24iLCJtYWMiOiI4ZTI1MzcyNjIyZGJmNzZmMTIzOWY4ZWFkYWNkZDg3MTFkMThkNmM2MjYxNGQ4Mjc3ZGZlNzRhODYyZmJjOThlIiwidGFnIjoiIn0%3D; larajet_session=eyJpdiI6IkxwSE1ZRnQvaXc0a0NHTEZkeWlyY0E9PSIsInZhbHVlIjoiWkpuTDkxQW15eFpQVVRtL3g0aTA5dFBGRzBDdTkvcCtvSkNGU0NVVkxrWFV0QVM5UExMLytmZUswM2trQWZaT21tY1k1UU00ckVIVDVEekplbGMxeHFINXVFVXhMWU10QzNqbnNDVXV4UnZKWEg0SDR3UUlXK3ZYM0U0MllWQnQiLCJtYWMiOiJhYTg5YzQzYzdkOTAwOGFlOWJkMjk0N2YzY2U4OGI4ZDM2NzAxZTQyZjBkYTBjNmY0ZWViZjJlOWRmMmY5YmQwIiwidGFnIjoiIn0%3D',
-      );
+      myHeaders.append('Content-Type', 'application/json');
 
-      let formdata = new FormData();
-      formdata.append('name', name);
-      formdata.append('email', email);
-      formdata.append('password', password);
-      formdata.append('ktp', ktp);
-      formdata.append('phone_number', noHp);
-      formdata.append('gender', gender);
+      let raw = JSON.stringify({
+        name: name,
+        email: email,
+        password: password,
+        password_confirmation: password_Confirmation,
+      });
 
-      fetch('https://api-antrian.zenmultimediacorp.com/api/register', {
+      fetch('https://api-todoapp-pp.herokuapp.com/api/auth/register', {
         method: 'POST',
         headers: myHeaders,
-        body: formdata,
+        body: raw,
         redirect: 'follow',
       })
         .then(response => response.json())
-        .then(result => console.log(result))
+        .then(result => console.log('akun terdaftar', result))
         .catch(error => console.log('error', error))
         .finally(() => setLoading(false));
     }
@@ -86,28 +73,21 @@ const Register = ({navigation}) => {
         title="Password"
         plc="* * * * * * * *"
         icon="eye"
-        secureTextEntry={mata}
-        onPress={() => setmata(!mata)}
+        secureTextEntry={mata1}
+        onPress={() => setmata1(!mata1)}
         onChangeText={t => setPassword(t)}
         conterMata={styles.conterMata}
       />
       <ConterInput
-        title="KTP"
-        plc="* * * * * * * * * *"
-        onChangeText={t => setKtp(t)}
-        keyboard="numeric"
+        title="Password Confirmation"
+        plc="* * * * * * * *"
+        icon="eye"
+        secureTextEntry={mata2}
+        onPress={() => setmata2(!mata2)}
+        onChangeText={t => setPassword_Confirmation(t)}
+        conterMata={styles.conterMata}
       />
-      <ConterInput
-        title="No Telp"
-        plc="* * * * * * * * * *"
-        onChangeText={t => setNoHp(t)}
-        keyboard="numeric"
-      />
-      <ConterInput
-        title="Gender"
-        plc="gender"
-        onChangeText={t => setGender(t)}
-      />
+
       <TouchableOpacity style={styles.conterBottom} onPress={() => reg()}>
         {loading ? (
           <ActivityIndicator size="small" color={Warna_Putih} />
